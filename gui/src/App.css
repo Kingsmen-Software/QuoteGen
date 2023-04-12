@@ -1,0 +1,26 @@
+.app-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  font-family: Arial, sans-serif;
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+
+.form-section {
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 20px;
+  padding: 5px;
+}
+
+button {
+  margin-top: 20px;
+}
+
+.generated-speech {
+  margin-top: 20px;
+  width: auto;
+}
