@@ -1,19 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import './App.css';
-
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import "./App.css";
 
 const App = () => {
-  const [closingActor, setClosingActor] = useState('');
+  const [closingActor, setClosingActor] = useState("");
   const [closingActorList, setClosingActorList] = useState([]);
-  const [closingLine, setClosingLine] = useState('');
-  const [generatedSpeech, setGeneratedSpeech] = useState('');
-  const [openingActor, setOpeningActor] = useState('');
+  const [closingLine, setClosingLine] = useState("");
+  const [generatedSpeech, setGeneratedSpeech] = useState("");
+  const [openingActor, setOpeningActor] = useState("");
   const [openingActorList, setOpeningActorList] = useState([]);
-  const [openingLine, setOpeningLine] = useState('');
-  const [promptValue, setPromptValue] = useState('');
-  const [imageUrl, setImageUrl] = useState('');
-
+  const [openingLine, setOpeningLine] = useState("");
+  const [promptValue, setPromptValue] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
 
   useEffect(() => {
     fetchActorList();
@@ -21,60 +19,56 @@ const App = () => {
 
   const fetchActorList = async () => {
     try {
-      const openingActors = await axios.get('http://localhost:3001/api/actors?type=opening');
-      const closingActors = await axios.get('http://localhost:3001/api/actors?type=closing');
+      const openingActors = await axios.get(
+        "http://localhost:3001/api/actors?type=opening"
+      );
+      const closingActors = await axios.get(
+        "http://localhost:3001/api/actors?type=closing"
+      );
       setOpeningActorList(openingActors.data);
       setClosingActorList(closingActors.data);
     } catch (error) {
-      console.error('Error fetching actor list:', error);
+      console.error("Error fetching actor list:", error);
     }
   };
 
   const fetchSpeechLines = async () => {
     try {
-      const response = await axios.get('http://localhost:3001/api/speech-lines', {
-        params: {
-          openingActor,
-          closingActor,
-        },
-      });
+      const response = await axios.get(
+        "http://localhost:3001/api/speech-lines",
+        {
+          params: {
+            openingActor,
+            closingActor,
+          },
+        }
+      );
       setOpeningLine(response.data.openingLine);
       setClosingLine(response.data.closingLine);
 
       // Generate the speech content
-      const speechResponse = await axios.post('http://localhost:3001/api/generate-speech', {
-        openingLine: response.data.openingLine,
-        closingLine: response.data.closingLine,
-      });
+      const speechResponse = await axios.post(
+        "http://localhost:3001/api/generate-speech",
+        {
+          openingLine: response.data.openingLine,
+          closingLine: response.data.closingLine,
+        }
+      );
 
-      console.log('Generated speech content:', speechResponse.data);
+      console.log("Generated speech content:", speechResponse.data);
       setGeneratedSpeech(speechResponse.data);
-    } catch (error) {
-      console.error('Error fetching speech lines:', error);
-    }
-  };
 
-  const GenerateDallEImage = async () => {
-    try {
-      const response = await axios.get('http://localhost:3001/api/generate-dallE', {
-        params: {
+      const dallEResponse = await axios.post(
+        "http://localhost:3001/api/generate-dallE",
+        {
           openingActor,
           closingActor,
-        },
-      });
-      setOpeningLine(response.data.openingLine);
-      setClosingLine(response.data.closingLine);
-
-      // Generate the speech content
-      const speechResponse = await axios.post('http://localhost:3001/api/generate-speech', {
-        openingLine: response.data.openingLine,
-        closingLine: response.data.closingLine,
-      });
-
-      console.log('Generated speech content:', speechResponse.data);
-      setGeneratedSpeech(speechResponse.data);
+        }
+      );
+      console.log(dallEResponse.data); // Do something with the response data
+      setImageUrl(dallEResponse.data.imageUrl);
     } catch (error) {
-      console.error('Error fetching speech lines:', error);
+      console.error("Error fetching speech lines:", error);
     }
   };
 
@@ -85,9 +79,12 @@ const App = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      const response = await axios.post('http://localhost:3001/api/generate-dallE', {
-        prompt: promptValue
-      });
+      const response = await axios.post(
+        "http://localhost:3001/api/generate-dallE",
+        {
+          prompt: promptValue,
+        }
+      );
       console.log(response.data); // Do something with the response data
       setImageUrl(response.data.imageUrl);
     } catch (error) {
@@ -95,10 +92,9 @@ const App = () => {
     }
   };
 
-
   return (
     <div className="app-container">
-      <h1>Speech Generator</h1>
+      <h1>CELEBRITY SPEECH MASHUP</h1>
       <div className="form-section">
         <label htmlFor="openingActor">Opening Actor: </label>
         <select
@@ -135,7 +131,7 @@ const App = () => {
         onClick={fetchSpeechLines}
         disabled={!openingActor || !closingActor}
       >
-        Generate new speech lines
+        CREATE MASHUP
       </button>
       <div className="generated-speech">
         <h2>Generated Speech</h2>
@@ -144,21 +140,14 @@ const App = () => {
           readOnly
           rows={10}
           cols={50}
-          style={{ resize: 'none' }}
+          style={{ resize: "none" }}
         ></textarea>
         <div>
-      <form onSubmit={handleSubmit}>
-        <label>
-          Input value:
-          <input type="text" value={promptValue} onChange={handleInputChange} />
-        </label>
-        <button type="submit">Submit</button>
-      </form>
-      {imageUrl && <img src={imageUrl} alt="Result" />}
-    </div>
+          {imageUrl && <img src={imageUrl} alt="Result" />}
+        </div>
       </div>
     </div>
   );
-}
+};
 
 export default App;
