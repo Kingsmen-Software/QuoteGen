@@ -44,8 +44,6 @@ app.get('/api/actors', (req, res) => {
 
 app.post('/api/generate-speech', async (req, res) => {
   const { openingLine, closingLine } = req.body;
-  //const myPrompt = `Write a paragraph that starts with openingLine and finishes with closingLine. Generate content that would logically connect the two sentences. openingLine: ${openingLine} closingLine: ${closingLine}`;
-
   try {
     
     const response = await openai.createCompletion({
