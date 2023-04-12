@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import backgroundImage from "./assets/background.png";
-import bannerImage from "./assets/header.png";
-import logoImage from "./assets/logo.png";
+import bannerImage from "./assets/fullHeader.png";
 import frameImage from "./assets/frame.png";
+import SocialMediaBar from "./components/SocialMediaBar";
+import topQuotationIcon from "./assets/quote1.png";
+import bottomQuotationIcon from "./assets/quote2.png";
 import "./App.css";
 
 const App = () => {
@@ -11,11 +13,10 @@ const App = () => {
   const [closingActorList, setClosingActorList] = useState([]);
   const [closingLine, setClosingLine] = useState("");
   const [generatedSpeech, setGeneratedSpeech] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
   const [openingActor, setOpeningActor] = useState("");
   const [openingActorList, setOpeningActorList] = useState([]);
   const [openingLine, setOpeningLine] = useState("");
-  const [promptValue, setPromptValue] = useState("");
-  const [imageUrl, setImageUrl] = useState("");
 
   useEffect(() => {
     fetchActorList();
@@ -34,47 +35,23 @@ const App = () => {
 
   const fetchSpeechLines = async () => {
     try {
-      const response = await axios.get("http://localhost:3001/api/speech-lines", { params: { openingActor, closingActor }});
+      const response = await axios.get("http://localhost:3001/api/speech-lines", { params: { openingActor, closingActor } });
       setOpeningLine(response.data.openingLine);
       setClosingLine(response.data.closingLine);
 
       // Generate the speech content
-      const speechResponse = await axios.post(
-        "http://localhost:3001/api/generate-speech",
-        {
-          openingLine: response.data.openingLine,
-          closingLine: response.data.closingLine,
-        }
-      );
+      const speechResponse = await axios.post("http://localhost:3001/api/generate-speech", { openingLine: response.data.openingLine, closingLine: response.data.closingLine });
 
       console.log("Generated speech content:", speechResponse.data);
       setGeneratedSpeech(speechResponse.data);
 
       const dallEResponse = await axios.post("http://localhost:3001/api/generate-dallE", { openingActor, closingActor });
-      console.log(dallEResponse.data); // Do something with the response data
+
+      console.log(dallEResponse.data);
       setImageUrl(dallEResponse.data.imageUrl);
+
     } catch (error) {
       console.error("Error fetching speech lines:", error);
-    }
-  };
-
-  const handleInputChange = (event) => {
-    setPromptValue(event.target.value);
-  };
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    try {
-      const response = await axios.post(
-        "http://localhost:3001/api/generate-dallE",
-        {
-          prompt: promptValue,
-        }
-      );
-      console.log(response.data); // Do something with the response data
-      setImageUrl(response.data.imageUrl);
-    } catch (error) {
-      console.error(error);
     }
   };
 
@@ -89,31 +66,22 @@ const App = () => {
       }}
     >
       <div className="container">
-        
         <div className="img-container">
           <img
             src={bannerImage}
             alt="Banner"
             style={{ width: "100vw" }}
           />
-          <img src={logoImage} alt="Logo"
-            style={{
-              position: "relative",
-              top: "0",
-              left: "50%",
-              transform: "translate(-50%, -130%)",
-              width: "auto",
-            }}
-          />
         </div>
 
-        <div className="form-section">
-          <div className="dropdown-wrapper">
-            <label htmlFor="openingActor" style={{ paddingRight: "10px" }}>Opening Actor: </label>
+        <div className="form-container">
+          <div className="form-section">
+            <label htmlFor="openingActor" className="edgy-label">Opening Actor <div className="edgy-label-line /" /></label>
             <select
               id="openingActor"
               value={openingActor}
               onChange={(e) => setOpeningActor(e.target.value)}
+              className="dropdown"
             >
               <option value="">Select an actor</option>
               {openingActorList.map((actor) => (
@@ -124,47 +92,48 @@ const App = () => {
             </select>
           </div>
 
-        <div className="dropdown-wrapper">
-          <label htmlFor="closingActor" style={{ paddingRight: "10px" }}>Closing Actor: </label>
-          <select
-            id="closingActor"
-            value={closingActor}
-            onChange={(e) => setClosingActor(e.target.value)}
-          >
-            <option value="">Select an actor</option>
-            {closingActorList.map((actor) => (
-              <option key={actor} value={actor}>
-                {actor}
-              </option>
-            ))}
-          </select>
+          <div className="form-section">
+            <label htmlFor="closingActor" className="edgy-label">Closing Actor <div className="edgy-label-line /" /></label>
+            <select
+              className="dropdown"
+              id="closingActor"
+              onChange={(e) => setClosingActor(e.target.value)}
+              value={closingActor}
+            >
+              <option value="">Select an actor</option>
+              {closingActorList.map((actor) => (
+                <option key={actor} value={actor}>
+                  {actor}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
-        </div>
-        </div>
-
-      <p className="quote">Opening line: {openingLine}</p>
-      <p className="quote">Closing line: {closingLine}</p>
+      </div>
 
       <button
         onClick={fetchSpeechLines}
         disabled={!openingActor || !closingActor}
+        className="edgy-button"
       >
         CREATE MASHUP
       </button>
 
-      <div>
-        {imageUrl && (
-        <div
-          style={{
-            width: "500px",
-            height: "500px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            position: "relative",
-            backgroundImage: `url(${frameImage})`,
-          }}
-        >
+      <SocialMediaBar />
+
+      <div className="generated-content-container">
+        <div className={`flex-container-fade ${imageUrl && generatedSpeech ? 'visible' : ''}`}>
+          <div
+            style={{
+              width: "500px",
+              height: "500px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              position: "relative",
+              backgroundImage: `url(${frameImage})`,
+            }}
+          >
             <img
               src={imageUrl}
               alt="Result"
@@ -180,18 +149,39 @@ const App = () => {
                 margin: "auto", // This centers the image
               }}
             />
+          </div>
+
+          <div className="generated-speech">
+            <div className="giant-quotes-top">"</div>
+              {generatedSpeech}
+            <div className="giant-quotes-bottom">"</div>
+          </div>
         </div>
-          )}
       </div>
-      <div className="generated-speech">
-        <textarea
-          value={generatedSpeech}
-          readOnly
-          rows={10}
-          cols={50}
-          style={{ resize: "true", width: "600px" }}
-        ></textarea>
+
+
+      <div className={`flex-container-slide ${imageUrl && generatedSpeech ? 'down' : ''}`}>
+        <div className="quote">
+          <div className="quote-label">
+            Opening Actor Input:
+          </div>
+          <div className="dividing-line" />
+          <p className={`text-box ${openingLine ? 'active' : ''}`}>
+            {openingLine}
+          </p>
+        </div>
+
+        <div className="quote">
+          <div className="quote-label">
+            Closing Actor Input:
+          </div>
+          <div className="dividing-line" />
+          <p className={`text-box ${closingLine ? 'active' : ''}`}>
+            {closingLine}
+          </p>
+        </div>
       </div>
+
     </div>
   );
 };
