@@ -7,7 +7,7 @@ require('dotenv').config();
 const { Configuration, OpenAIApi } = require("openai");
 
 const configuration = new Configuration({
-  apiKey: process.env.OPENAI_API_KEY,
+  apiKey: process.env.OPENAI_API_KEY
 });
 const openai = new OpenAIApi(configuration);
 
@@ -64,6 +64,41 @@ app.post('/api/generate-speech', async (req, res) => {
   } catch (error) {
     console.error('Error generating speech:', error); // Add this line to log the error
     res.status(500).json({ error: 'Error generating speech' });
+  }
+});
+
+app.post('/api/generate-dallE', async (req, res) => {
+  try {
+    const apiKey = process.env.OPENAI_API_KEY_DALL_E;
+    const prompt = req.body.prompt;
+    const response = await axios.post(
+      "https://api.openai.com/v1/images/generations",
+      {
+        model: "image-alpha-001",
+        prompt: prompt,
+        size: "512x512",
+        response_format: "url",
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${apiKey}`,
+        },
+      }
+    );
+
+    // const openai = new OpenAIApi(configuration);
+    // const response = await openai.createImage({
+    //     prompt: "A cute baby sea otter",
+    //     n: 1,
+    //     size: "512x512",
+    //   });
+
+    const imageUrl = response.data.data[0].url;
+    res.send({ imageUrl });
+  } catch (error) {
+      console.log(error)
+    res.send({ error });
   }
 });
 
