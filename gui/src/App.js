@@ -165,9 +165,8 @@ const App = () => {
         <div className="generated-content-container">
           <img src={leftGif} alt="Left Gif" className="left-gif" />
           <div
-            className={`flex-container-fade ${
-              imageUrl && generatedSpeech ? "visible" : ""
-            }`}
+            className={`flex-container-fade ${imageUrl && generatedSpeech ? "visible" : ""
+              }`}
           >
             <div
               style={{
@@ -207,9 +206,8 @@ const App = () => {
         </div>
 
         <div
-          className={`flex-container-slide ${
-            imageUrl && generatedSpeech ? "down" : ""
-          }`}
+          className={`flex-container-slide ${imageUrl && generatedSpeech ? "down" : ""
+            }`}
         >
           <div className="quote">
             <div className="quote-label">Opening Actor Input:</div>
@@ -239,10 +237,11 @@ const App = () => {
                 {selectedSong.artist} - {selectedSong.album}
               </p>
               <audio
-                src={selectedSong.previewUrl}
-                controls
                 autoPlay={isPlaying}
+                controls
                 onEnded={handleAudioEnded}
+                src={selectedSong.previewUrl}
+                volume={0.1}
               />
             </div>
           </div>
