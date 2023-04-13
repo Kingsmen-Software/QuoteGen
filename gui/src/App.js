@@ -4,8 +4,8 @@ import backgroundImage from "./assets/background.png";
 import bannerImage from "./assets/fullHeader.png";
 import frameImage from "./assets/frame.png";
 import SocialMediaBar from "./components/SocialMediaBar";
-import topQuotationIcon from "./assets/quote1.png";
-import bottomQuotationIcon from "./assets/quote2.png";
+import leftGif from "./assets/Left-KS-Ad.gif";
+import rightGif from "./assets/Right-KS-Ad.gif";
 import "./App.css";
 
 const App = () => {
@@ -56,132 +56,135 @@ const App = () => {
   };
 
   return (
-    <div
-      className="app-container"
-      style={{
-        backgroundImage: `url(${backgroundImage})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        minHeight: "100vh",
-      }}
-    >
-      <div className="container">
-        <div className="img-container">
-          <img
-            src={bannerImage}
-            alt="Banner"
-            style={{ width: "100vw" }}
-          />
-        </div>
-
-        <div className="form-container">
-          <div className="form-section">
-            <label htmlFor="openingActor" className="edgy-label">Opening Actor <div className="edgy-label-line /" /></label>
-            <select
-              id="openingActor"
-              value={openingActor}
-              onChange={(e) => setOpeningActor(e.target.value)}
-              className="dropdown"
-            >
-              <option value="">Select an actor</option>
-              {openingActorList.map((actor) => (
-                <option key={actor} value={actor}>
-                  {actor}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="form-section">
-            <label htmlFor="closingActor" className="edgy-label">Closing Actor <div className="edgy-label-line /" /></label>
-            <select
-              className="dropdown"
-              id="closingActor"
-              onChange={(e) => setClosingActor(e.target.value)}
-              value={closingActor}
-            >
-              <option value="">Select an actor</option>
-              {closingActorList.map((actor) => (
-                <option key={actor} value={actor}>
-                  {actor}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-      </div>
-
-      <button
-        onClick={fetchSpeechLines}
-        disabled={!openingActor || !closingActor}
-        className="edgy-button"
+    <div>
+      <div
+        className="app-container"
+        style={{
+          backgroundImage: `url(${backgroundImage})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          minHeight: "100vh",
+        }}
       >
-        CREATE MASHUP
-      </button>
-
-      <SocialMediaBar />
-
-      <div className="generated-content-container">
-        <div className={`flex-container-fade ${imageUrl && generatedSpeech ? 'visible' : ''}`}>
-          <div
-            style={{
-              width: "500px",
-              height: "500px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              position: "relative",
-              backgroundImage: `url(${frameImage})`,
-            }}
-          >
+        <div className="container">
+          <div className="img-container">
             <img
-              src={imageUrl}
-              alt="Result"
-              style={{
-                maxWidth: "90%",
-                maxHeight: "90%",
-                objectFit: "cover",
-                position: "absolute", // This positions the image within the frame
-                top: "0",
-                left: "0",
-                right: "0",
-                bottom: "0",
-                margin: "auto", // This centers the image
-              }}
+              src={bannerImage}
+              alt="Banner"
+              style={{ width: "100vw" }}
             />
           </div>
 
-          <div className="generated-speech">
-            <div className="giant-quotes-top">"</div>
+          <div className="form-container">
+            <div className="form-section">
+              <label htmlFor="openingActor" className="edgy-label">Opening Actor <div className="edgy-label-line /" /></label>
+              <select
+                id="openingActor"
+                value={openingActor}
+                onChange={(e) => setOpeningActor(e.target.value)}
+                className="dropdown"
+              >
+                <option value="">Select an actor</option>
+                {openingActorList.map((actor) => (
+                  <option key={actor} value={actor}>
+                    {actor}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="form-section">
+              <label htmlFor="closingActor" className="edgy-label">Closing Actor <div className="edgy-label-line /" /></label>
+              <select
+                className="dropdown"
+                id="closingActor"
+                onChange={(e) => setClosingActor(e.target.value)}
+                value={closingActor}
+              >
+                <option value="">Select an actor</option>
+                {closingActorList.map((actor) => (
+                  <option key={actor} value={actor}>
+                    {actor}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <button
+          onClick={fetchSpeechLines}
+          disabled={!openingActor || !closingActor}
+          className="edgy-button"
+        >
+          CREATE MASHUP
+        </button>
+
+        <SocialMediaBar />
+
+        <div className="generated-content-container">
+          <img src={leftGif} alt="Left Gif" className="left-gif" />
+          <div className={`flex-container-fade ${imageUrl && generatedSpeech ? 'visible' : ''}`}>
+            <div
+              style={{
+                width: "500px",
+                height: "500px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                position: "relative",
+                backgroundImage: `url(${frameImage})`,
+              }}
+            >
+              <img
+                src={imageUrl}
+                alt="Result"
+                style={{
+                  maxWidth: "80%",
+                  maxHeight: "80%",
+                  objectFit: "cover",
+                  position: "absolute", // This positions the image within the frame
+                  top: "0",
+                  left: "0",
+                  right: "0",
+                  bottom: "0",
+                  margin: "auto", // This centers the image
+                }}
+              />
+            </div>
+
+            <div className="generated-speech">
+              <div className="giant-quotes-top">"</div>
               {generatedSpeech}
-            <div className="giant-quotes-bottom">"</div>
+              <div className="giant-quotes-bottom">"</div>
+            </div>
+          </div>
+                <img src={rightGif} alt="Right Gif" className="right-gif" />
+        </div>
+
+
+        <div className={`flex-container-slide ${imageUrl && generatedSpeech ? 'down' : ''}`}>
+          <div className="quote">
+            <div className="quote-label">
+              Opening Actor Input:
+            </div>
+            <div className="dividing-line" />
+            <p className={`text-box ${openingLine ? 'active' : ''}`}>
+              {openingLine}
+            </p>
+          </div>
+
+          <div className="quote">
+            <div className="quote-label">
+              Closing Actor Input:
+            </div>
+            <div className="dividing-line" />
+            <p className={`text-box ${closingLine ? 'active' : ''}`}>
+              {closingLine}
+            </p>
           </div>
         </div>
       </div>
-
-
-      <div className={`flex-container-slide ${imageUrl && generatedSpeech ? 'down' : ''}`}>
-        <div className="quote">
-          <div className="quote-label">
-            Opening Actor Input:
-          </div>
-          <div className="dividing-line" />
-          <p className={`text-box ${openingLine ? 'active' : ''}`}>
-            {openingLine}
-          </p>
-        </div>
-
-        <div className="quote">
-          <div className="quote-label">
-            Closing Actor Input:
-          </div>
-          <div className="dividing-line" />
-          <p className={`text-box ${closingLine ? 'active' : ''}`}>
-            {closingLine}
-          </p>
-        </div>
-      </div>
-
     </div>
   );
 };

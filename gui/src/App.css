@@ -173,6 +173,12 @@ label {
   font-size: 50px;
 }
 
+.left-gif {
+  height: 600px;
+  width: 200px;
+  padding-right: 200px
+}
+
 .quote {
   align-items: center;
   display: flex;
@@ -187,6 +193,12 @@ label {
   color: rgb(170, 0, 0);
   font-family: "Open Sans";
   font-size: 20px;
+}
+
+.right-gif {
+  height: 600px;
+  width: 200px;
+  padding-left: 200px;
 }
 
 .text-box {
