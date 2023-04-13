@@ -8,6 +8,8 @@ import leftGif from "./assets/Left-KS-Ad.gif";
 import rightGif from "./assets/Right-KS-Ad.gif";
 import "./App.css";
 
+const searchUrl = 'https://itunes.apple.com/search';
+
 const App = () => {
   const [closingActor, setClosingActor] = useState("");
   const [closingActorList, setClosingActorList] = useState([]);
@@ -17,6 +19,8 @@ const App = () => {
   const [openingActor, setOpeningActor] = useState("");
   const [openingActorList, setOpeningActorList] = useState([]);
   const [openingLine, setOpeningLine] = useState("");
+  const [selectedSong, setSelectedSong] = useState(null);
+  const [isPlaying, setIsPlaying] = useState(false);
 
   useEffect(() => {
     fetchActorList();
@@ -50,10 +54,40 @@ const App = () => {
       console.log(dallEResponse.data);
       setImageUrl(dallEResponse.data.imageUrl);
 
+      const params = new URLSearchParams({
+        term: openingActor,
+        media: 'music',
+        entity: 'song',
+        limit: 1,
+      });
+
+      const songResponse = await fetch(`${searchUrl}?${params}`);
+      const data = await songResponse.json();
+
+      if (data.resultCount === 0) {
+        alert(`No songs found for ${openingActor}`);
+        return;
+      }
+
+      const result = data.results[0];
+      const newSong = {
+        title: result.trackName,
+        artist: result.artistName,
+        album: result.collectionName,
+        artwork: result.artworkUrl100,
+        previewUrl: result.previewUrl,
+      };
+      setSelectedSong(newSong);
+      setIsPlaying(true);
+
     } catch (error) {
       console.error("Error fetching speech lines:", error);
     }
   };
+
+  function handleAudioEnded() {
+    setIsPlaying(false);
+  }
 
   return (
     <div>
@@ -68,20 +102,20 @@ const App = () => {
       >
         <div className="container">
           <div className="img-container">
-            <img
-              src={bannerImage}
-              alt="Banner"
-              style={{ width: "100vw" }}
-            />
+            <img src={bannerImage} alt="Banner" style={{ width: "100vw" }} />
           </div>
 
           <div className="form-container">
             <div className="form-section">
-              <label htmlFor="openingActor" className="edgy-label">Opening Actor <div className="edgy-label-line /" /></label>
+              <label htmlFor="openingActor" className="edgy-label">
+                Opening Actor <div className="edgy-label-line /" />
+              </label>
               <select
                 id="openingActor"
                 value={openingActor}
-                onChange={(e) => setOpeningActor(e.target.value)}
+                onChange={(e) =>
+                  setOpeningActor(e.target.value)
+                }
                 className="dropdown"
               >
                 <option value="">Select an actor</option>
@@ -94,7 +128,9 @@ const App = () => {
             </div>
 
             <div className="form-section">
-              <label htmlFor="closingActor" className="edgy-label">Closing Actor <div className="edgy-label-line /" /></label>
+              <label htmlFor="closingActor" className="edgy-label">
+                Closing Actor <div className="edgy-label-line /" />
+              </label>
               <select
                 className="dropdown"
                 id="closingActor"
@@ -124,7 +160,11 @@ const App = () => {
 
         <div className="generated-content-container">
           <img src={leftGif} alt="Left Gif" className="left-gif" />
-          <div className={`flex-container-fade ${imageUrl && generatedSpeech ? 'visible' : ''}`}>
+          <div
+            className={`flex-container-fade ${
+              imageUrl && generatedSpeech ? "visible" : ""
+            }`}
+          >
             <div
               style={{
                 width: "500px",
@@ -159,31 +199,50 @@ const App = () => {
               <div className="giant-quotes-bottom">"</div>
             </div>
           </div>
-                <img src={rightGif} alt="Right Gif" className="right-gif" />
+          <img src={rightGif} alt="Right Gif" className="right-gif" />
         </div>
 
-
-        <div className={`flex-container-slide ${imageUrl && generatedSpeech ? 'down' : ''}`}>
+        <div
+          className={`flex-container-slide ${
+            imageUrl && generatedSpeech ? "down" : ""
+          }`}
+        >
           <div className="quote">
-            <div className="quote-label">
-              Opening Actor Input:
-            </div>
+            <div className="quote-label">Opening Actor Input:</div>
             <div className="dividing-line" />
-            <p className={`text-box ${openingLine ? 'active' : ''}`}>
+            <p className={`text-box ${openingLine ? "active" : ""}`}>
               {openingLine}
             </p>
           </div>
 
           <div className="quote">
-            <div className="quote-label">
-              Closing Actor Input:
-            </div>
+            <div className="quote-label">Closing Actor Input:</div>
             <div className="dividing-line" />
-            <p className={`text-box ${closingLine ? 'active' : ''}`}>
+            <p className={`text-box ${closingLine ? "active" : ""}`}>
               {closingLine}
             </p>
           </div>
         </div>
+
+        {selectedSong && (
+          <div className="song-container">
+            <div className="song-img-container">
+              <img src={selectedSong.artwork} alt="Album artwork" />
+            </div>
+            <div className="song-details-container">
+              <h4>{selectedSong.title}</h4>
+              <p>
+                {selectedSong.artist} - {selectedSong.album}
+              </p>
+              <audio
+                src={selectedSong.previewUrl}
+                controls
+                autoPlay={isPlaying}
+                onEnded={handleAudioEnded}
+              />
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
