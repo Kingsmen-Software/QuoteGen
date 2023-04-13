@@ -6,6 +6,7 @@ import frameImage from "./assets/frame.png";
 import SocialMediaBar from "./components/SocialMediaBar";
 import leftGif from "./assets/Left-KS-Ad.gif";
 import rightGif from "./assets/Right-KS-Ad.gif";
+import { FaSpinner } from "react-icons/fa";
 import "./App.css";
 
 const searchUrl = 'https://itunes.apple.com/search';
@@ -21,6 +22,7 @@ const App = () => {
   const [openingLine, setOpeningLine] = useState("");
   const [selectedSong, setSelectedSong] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     fetchActorList();
@@ -39,6 +41,7 @@ const App = () => {
 
   const fetchSpeechLines = async () => {
     try {
+      setIsLoading(true);
       const response = await axios.get("http://localhost:3001/api/speech-lines", { params: { openingActor, closingActor } });
       setOpeningLine(response.data.openingLine);
       setClosingLine(response.data.closingLine);
@@ -79,6 +82,7 @@ const App = () => {
       };
       setSelectedSong(newSong);
       setIsPlaying(true);
+      setIsLoading(false);
 
     } catch (error) {
       console.error("Error fetching speech lines:", error);
@@ -153,7 +157,7 @@ const App = () => {
           disabled={!openingActor || !closingActor}
           className="edgy-button"
         >
-          CREATE MASHUP
+          {isLoading ? <FaSpinner className="spinner" /> : 'CREATE MASHUP'}
         </button>
 
         <SocialMediaBar />
